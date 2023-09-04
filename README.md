@@ -174,4 +174,4 @@ func _ready():
 ```
 <br>
 
-Be aware that calling `delete()` in a reference with no initial path will result in the complete deletion of the database's content.
+Be aware that calling `delete()` in a reference with no initial path will result in the complete deletion of the database's content. 
