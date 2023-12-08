@@ -10,9 +10,7 @@ Adds Firebase compatibility to your Godot 4.x project.
 
 Make sure there's no other `Firebase` plugin/autoload in your project.
 
-1. Get the addon. You can either:
-- use the built-in AssetLib to search and install `Firebase API (4.x)`
-- download the ZIP file from GitHub and put the `addons` folder in your project's main directory
+1. Put the `addons` folder in your project's main directory
 2. Enable the plugin in `Project > Project Settings > Plugins`
 
 If it's enabled but you still have no `Firebase` in your autoloads, disable and re-enable it again.
