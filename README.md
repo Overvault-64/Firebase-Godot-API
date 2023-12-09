@@ -1,8 +1,8 @@
 <p align="center"><img src="https://brandslogos.com/wp-content/uploads/thumbs/firebase-logo-vector.svg" width="80px"/></p>
 
-# Firebase API for Godot 4.x
+# Firebase API for Godot 4
 
-Adds Firebase compatibility to your Godot 4.x project.
+Adds Firebase connectivity to your Godot 4 project.
 
 <br>
 
