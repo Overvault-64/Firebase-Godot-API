@@ -13,24 +13,7 @@ func get_realtime_reference(path := "", filter := {}) -> RealtimeReference:
 	var firebase_reference := RealtimeReference.new()
 	var pusher := HTTPRequest.new()
 	var listener := HTTPSSEClient.new()
-	firebase_reference.setup(path, filter, pusher, listener)
+	var getter := HTTPRequest.new()
+	firebase_reference.setup(path, filter, pusher, listener, getter)
 	add_child(firebase_reference)
 	return firebase_reference
-
-
-# Pass a HTTPRequest object existing in your tree
-# If you don't pass a path, the entire database content will be returned
-# AUTHENTICATED REQUEST CURRENTLY BROKEN
-static func get_snapshot(request : HTTPRequest, path := "", authenticate := false):
-	var url : String = Firebase._config.databaseURL + "/" + path + ".json"
-	if authenticate:
-		var headers : PackedStringArray = [
-			"Content-Type: application/json",
-			"Authorization: Bearer " + Firebase.Auth.auth.idtoken
-			]
-		request.request(url, headers) # not working, always returns "Unauthorized request."
-	else:
-		request.request(url)
-	var response = await request.request_completed
-	var parsed_response = JSON.parse_string(response[3].get_string_from_utf8())
-	return parsed_response

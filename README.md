@@ -106,7 +106,7 @@ To initialize a Realtime Database reference, use this method of `FirebaseRealtim
 func get_realtime_reference(path := "", filter := {}) -> FirebaseRealtimeReference
 ```
 
-Providing a path is optional: if you don't, the reference will work through the entire database, but will only listen to the initial key map (e.g. if new keys are added to the database after referencing, it won't detect them or their changes).
+Providing a path is optional: if you don't, the reference will work through the entire database.
 
 <br>
 
@@ -122,6 +122,8 @@ func myfunc(update):
 ```
 
 The signal `new_data_update` is emitted everytime there's a change in the referenced path in your database.
+
+Please note that when a new key is *created* in the database, the creation event itself will **not** fire an *update* signal.
 
 <br>
 

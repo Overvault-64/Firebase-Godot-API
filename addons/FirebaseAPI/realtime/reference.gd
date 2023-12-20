@@ -10,8 +10,11 @@ signal delete_data_update(_update : Dictionary)
 signal push_successful()
 signal push_failed()
 
+signal snapshot(snapshot_data : Dictionary)
+
 var _pusher : HTTPRequest
 var _listener : HTTPSSEClient
+var _getter : HTTPRequest
 var _filter_query : Dictionary
 var _db_path : String
 var _cached_filter : String
@@ -23,7 +26,7 @@ var _can_connect_to_host := false
 var _headers : PackedStringArray
 
 
-func setup(path : String, filter_query_dict : Dictionary, pusher_ref : HTTPRequest, listener_ref : HTTPSSEClient) -> void:
+func setup(path : String, filter_query_dict : Dictionary, pusher_ref : HTTPRequest, listener_ref : HTTPSSEClient, getter_ref : HTTPRequest) -> void:
 	_db_path = path
 	_filter_query = filter_query_dict
 	
@@ -38,6 +41,11 @@ func setup(path : String, filter_query_dict : Dictionary, pusher_ref : HTTPReque
 	var port = -1
 	_listener.set_coordinates(base_url, extended_url, port)
 	add_child(_listener)
+
+	_getter = getter_ref
+	add_child(_getter)
+	_getter.request_completed.connect(on_snapshot_complete)
+		
 
 
 func _get_list_url(with_port := true) -> String:
@@ -81,6 +89,14 @@ func on_new_sse_event(headers : Dictionary, event : String, data) -> void:
 			patch_data_update.emit(_update)
 		elif event == "delete":
 			delete_data_update.emit(_update)
+
+
+func get_snapshot(path := "") -> Dictionary:
+	var remaining := _get_remaining_path()
+	var ref_pos = _get_list_url() + _db_path + "/" + path + remaining
+	_getter.request(ref_pos, _headers, HTTPClient.METHOD_GET, "")
+	return await snapshot
+
 
 
 ######## PUSH
@@ -133,3 +149,13 @@ func on_push_request_complete(result : int, response_code : int, headers : Packe
 		return
 	if _delete_queue.size() > 0:
 		delete(_delete_queue.pop_front())
+
+
+func on_snapshot_complete(result : int, response_code : int, headers : PackedStringArray, body : PackedByteArray) -> void:
+	if response_code == HTTPClient.RESPONSE_OK:
+		var bod = body
+		if body is PackedByteArray:
+			bod = bod.get_string_from_utf8()
+		snapshot.emit(JSON.parse_string(bod))
+	else:
+		snapshot.emit({"ERROR" : "Snapshot failed!"})
