@@ -129,7 +129,7 @@ func on_push_request_complete(result : int, response_code : int, headers : Packe
 		return
 	if _update_queue.size() > 0:
 		var e = _update_queue.pop_front()
-		update(e.path, e.data)
+		update(e.data, e.path)
 		return
 	if _delete_queue.size() > 0:
 		delete(_delete_queue.pop_front())
